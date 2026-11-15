@@ -182,7 +182,8 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
           { role: 'user', content: `Prospect replied: "${prospectReplyText}".\n\nThread:\n${formattedHistory}` },
         ],
         model,
-        0.2
+        0.2,
+        'chat_email'
       );
 
       const parsed = JSON.parse(extractJsonString(raw));

@@ -190,12 +190,15 @@ export default function Header() {
           )}
         </div>
 
-        {/* API Key from Env Status Indicator */}
-        <div className="flex items-center bg-[#090e18] border border-[#263554] rounded-[8px] px-2.5 py-1.5 gap-2">
-          <span className="text-[0.72rem] text-[#94a3b8] font-semibold uppercase tracking-wider">API:</span>
+        {/* Dual API Keys from Env Status Indicator */}
+        <div
+          className="flex items-center bg-[#090e18] border border-[#263554] rounded-[8px] px-2.5 py-1.5 gap-2"
+          title="Primary Key: Lead Discovery & Analysis | Secondary Key: Chatbot & Email Craft (with automatic failover backup)"
+        >
+          <span className="text-[0.72rem] text-[#94a3b8] font-semibold uppercase tracking-wider">Dual Keys:</span>
           <span className="flex items-center gap-1.5 text-[0.75rem] text-[#10b981] font-semibold">
             <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
-            Env Configured
+            Active (Primary & Secondary)
           </span>
         </div>
       </div>

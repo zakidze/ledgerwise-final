@@ -88,7 +88,8 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
           { role: 'user', content: userPrompt },
         ],
         model,
-        0.7
+        0.7,
+        'lead_analysis'
       );
 
       const parsedArray = extractJsonArray(rawContent);

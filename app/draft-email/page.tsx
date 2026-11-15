@@ -149,7 +149,8 @@ export default function DraftEmailPage() {
           { role: 'user', content: `Payload:\n${payloadText}\n\nReturn JSON schema: {"subject":"string","body":"string"}` },
         ],
         model,
-        0.4
+        0.4,
+        'chat_email'
       );
 
       const parsed = extractEmailJson(rawContent);
@@ -218,7 +219,8 @@ export default function DraftEmailPage() {
           { role: 'user', content: `Research company: "${company.company_name}", Domain: "${company.domain}"` },
         ],
         model,
-        0.25
+        0.25,
+        'lead_analysis'
       );
 
       const jsonStr = extractJsonString(raw);

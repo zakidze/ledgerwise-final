@@ -69,7 +69,8 @@ export default function CompanyDetailsPage({ params }: { params: Promise<{ id: s
           { role: 'user', content: `Research company: "${company.company_name}", Domain: "${company.domain}"` },
         ],
         model,
-        0.25
+        0.25,
+        'lead_analysis'
       );
 
       const jsonStr = extractJsonString(raw);

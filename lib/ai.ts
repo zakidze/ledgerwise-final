@@ -123,12 +123,13 @@ export function extractJsonArray(rawText: string): unknown[] {
 export async function callAiCompletion(
   messages: Array<{ role: string; content: string }>,
   model = 'qwen/qwen3.7-flash:free',
-  temperature = 0.7
+  temperature = 0.7,
+  purpose: 'lead_analysis' | 'chat_email' = 'lead_analysis'
 ): Promise<string> {
   const res = await fetch('/api/ai/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, model, temperature }),
+    body: JSON.stringify({ messages, model, temperature, purpose }),
   });
 
   if (!res.ok) {
