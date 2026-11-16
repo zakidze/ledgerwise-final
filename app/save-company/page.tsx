@@ -79,73 +79,73 @@ export default function SaveCompanyPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Pipeline Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(245,158,11,0.15)] text-[#f59e0b]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(245,158,11,0.15)] text-[#f59e0b] shrink-0">
             📌
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Total Saved</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{totalSaved}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Total Saved</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{totalSaved}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(56,189,248,0.15)] text-[#38bdf8]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(56,189,248,0.15)] text-[#38bdf8] shrink-0">
             📝
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Emails Drafted</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{totalDrafted}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Emails Drafted</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{totalDrafted}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(139,92,246,0.15)] text-[#a78bfa]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(139,92,246,0.15)] text-[#a78bfa] shrink-0">
             🚀
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Outbound Sent</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{totalSent}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Outbound Sent</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{totalSent}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(16,185,129,0.15)] text-[#10b981]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(16,185,129,0.15)] text-[#10b981] shrink-0">
             💬
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">In Discussion</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{totalChatting}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">In Discussion</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{totalChatting}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(234,179,8,0.2)] text-[#eab308]">
+        <div className="col-span-2 sm:col-span-1 bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(234,179,8,0.2)] text-[#eab308] shrink-0">
             🏆
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Calls Booked</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{totalBooked}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Calls Booked</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{totalBooked}</div>
           </div>
         </div>
       </div>
 
       {/* Controls & Search */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#151d30] border border-[#263554] p-3.5 rounded-[10px]">
-        <div className="flex items-center gap-2.5 flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#151d30] border border-[#263554] p-3 sm:p-3.5 rounded-[10px]">
+        <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search saved companies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-[#090e18] border border-[#263554] text-white px-3 py-1.5 rounded-[6px] text-[0.82rem] w-[220px] outline-none"
+            className="bg-[#090e18] border border-[#263554] text-white px-3 py-1.5 rounded-[6px] text-[0.82rem] w-full sm:w-[220px] outline-none"
           />
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2.5 py-1.5 rounded-[6px] text-[0.82rem] outline-none cursor-pointer"
+            className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2.5 py-1.5 rounded-[6px] text-[0.82rem] outline-none cursor-pointer flex-1 sm:flex-initial"
           >
             <option value="ALL">All Pipeline Stages</option>
             <option value="SAVED">Saved</option>
@@ -158,7 +158,7 @@ export default function SaveCompanyPage() {
           <select
             value={scoreFilter}
             onChange={(e) => setScoreFilter(e.target.value)}
-            className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2.5 py-1.5 rounded-[6px] text-[0.82rem] outline-none cursor-pointer"
+            className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2.5 py-1.5 rounded-[6px] text-[0.82rem] outline-none cursor-pointer flex-1 sm:flex-initial"
           >
             <option value="ALL">All ICP Scores</option>
             <option value="High">High Fit</option>
@@ -167,11 +167,11 @@ export default function SaveCompanyPage() {
           </select>
         </div>
 
-        <div className="flex gap-2">
-          <button className="btn btn-outline btn-small" onClick={exportCsv}>
+        <div className="flex gap-2 flex-wrap w-full sm:w-auto">
+          <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={exportCsv}>
             Export Pipeline CSV
           </button>
-          <button className="btn btn-accent btn-small" onClick={() => setIsAddModalOpen(true)}>
+          <button className="btn btn-accent btn-small flex-1 sm:flex-initial" onClick={() => setIsAddModalOpen(true)}>
             + Add Company Manually
           </button>
         </div>

@@ -24,7 +24,7 @@ export default function RootLayout({
         <Suspense fallback={<div className="h-10 bg-[#090e18] border-b border-[#263554]" />}>
           <FlowBanner />
         </Suspense>
-        <main className="flex-1 flex flex-col max-w-[1700px] w-full mx-auto p-5">
+        <main className="flex-1 flex flex-col max-w-[1700px] w-full mx-auto p-3 sm:p-5">
           <Suspense fallback={<div className="py-12 text-center text-[#94a3b8]">Loading...</div>}>
             {children}
           </Suspense>

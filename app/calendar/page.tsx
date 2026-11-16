@@ -120,46 +120,46 @@ export default function CalendarPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(16,185,129,0.15)] text-[#10b981]">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(16,185,129,0.15)] text-[#10b981] shrink-0">
             🟢
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">
-              Available Slots ({monthName})
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider truncate">
+              Available ({monthName})
             </h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{monthAvailable}</div>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{monthAvailable}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(234,179,8,0.2)] text-[#eab308]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(234,179,8,0.2)] text-[#eab308] shrink-0">
             🏆
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Confirmed Calls</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{monthBooked}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider truncate">Confirmed Calls</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{monthBooked}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(239,68,68,0.15)] text-[#f87171]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(239,68,68,0.15)] text-[#f87171] shrink-0">
             ⛔
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Blocked Slots</h4>
-            <div className="text-[1.35rem] text-white font-extrabold">{monthBlocked}</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider truncate">Blocked Slots</h4>
+            <div className="text-[1.2rem] sm:text-[1.35rem] text-white font-extrabold">{monthBlocked}</div>
           </div>
         </div>
 
-        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg bg-[rgba(56,189,248,0.15)] text-[#38bdf8]">
+        <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg bg-[rgba(56,189,248,0.15)] text-[#38bdf8] shrink-0">
             📍
           </div>
           <div>
-            <h4 className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">Time Zone</h4>
-            <div className="text-[1.05rem] text-white font-extrabold pt-1">EST (New York)</div>
+            <h4 className="text-[0.68rem] sm:text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider truncate">Time Zone</h4>
+            <div className="text-[0.95rem] sm:text-[1.05rem] text-white font-extrabold pt-1 truncate">EST (New York)</div>
           </div>
         </div>
       </div>
@@ -167,43 +167,43 @@ export default function CalendarPage() {
       {/* Main Calendar Suite Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left: Month Grid Card */}
-        <div className="lg:col-span-8 bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-center gap-3 flex-wrap border-b border-[#263554] pb-3">
-            <div className="text-[1.25rem] font-extrabold text-white flex items-center gap-2">
+        <div className="lg:col-span-8 bg-[#151d30] border border-[#263554] rounded-xl p-3.5 sm:p-5 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#263554] pb-3">
+            <div className="text-[1.1rem] sm:text-[1.25rem] font-extrabold text-white flex items-center gap-2">
               <span>📅</span>
               <span>
                 {monthName} {calYear}
               </span>
             </div>
 
-            <div className="flex gap-2 items-center">
-              <button className="btn btn-outline btn-small" onClick={() => navigateMonth(-1)}>
+            <div className="flex gap-1.5 sm:gap-2 items-center flex-wrap">
+              <button className="btn btn-outline btn-small text-[0.72rem]" onClick={() => navigateMonth(-1)}>
                 ◀ Prev
               </button>
-              <button className="btn btn-outline btn-small" onClick={jumpToToday}>
+              <button className="btn btn-outline btn-small text-[0.72rem]" onClick={jumpToToday}>
                 Today
               </button>
-              <button className="btn btn-outline btn-small" onClick={() => navigateMonth(1)}>
+              <button className="btn btn-outline btn-small text-[0.72rem]" onClick={() => navigateMonth(1)}>
                 Next ▶
               </button>
-              <button className="btn btn-outline btn-small" onClick={handleExportICS} title="Export .ICS">
+              <button className="btn btn-outline btn-small text-[0.72rem]" onClick={handleExportICS} title="Export .ICS">
                 📥 Export .ICS
               </button>
             </div>
           </div>
 
-          <div className="text-[0.78rem] text-[#94a3b8] flex gap-4 flex-wrap">
-            <span>🟢 Green: Available slots for AI SDR</span>
-            <span>🏆 Gold: Booked discovery calls</span>
-            <span>⛔ Red: Blocked hours</span>
+          <div className="text-[0.72rem] sm:text-[0.78rem] text-[#94a3b8] flex gap-2.5 sm:gap-4 flex-wrap">
+            <span>🟢 Open</span>
+            <span>🏆 Booked</span>
+            <span>⛔ Blocked</span>
           </div>
 
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 gap-2 -mb-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 -mb-2">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
               <div
                 key={d}
-                className="text-center text-[0.72rem] font-bold text-[#94a3b8] uppercase py-1 tracking-wider"
+                className="text-center text-[0.62rem] sm:text-[0.72rem] font-bold text-[#94a3b8] uppercase py-1 tracking-wider"
               >
                 {d}
               </div>
@@ -211,14 +211,14 @@ export default function CalendarPage() {
           </div>
 
           {/* Day Cells Grid */}
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {/* Prev month cells */}
             {prevMonthCells.map((dayNum, i) => (
               <div
                 key={'prev_' + i}
-                className="min-h-[94px] bg-[#090e18] border border-[#263554] rounded-lg p-2 flex flex-col justify-between opacity-30 cursor-not-allowed"
+                className="min-h-[62px] sm:min-h-[94px] bg-[#090e18] border border-[#263554] rounded-lg p-1 sm:p-2 flex flex-col justify-between opacity-30 cursor-not-allowed"
               >
-                <span className="text-[0.85rem] font-bold text-[#cbd5e1]">{dayNum}</span>
+                <span className="text-[0.72rem] sm:text-[0.85rem] font-bold text-[#cbd5e1]">{dayNum}</span>
               </div>
             ))}
 
@@ -240,7 +240,7 @@ export default function CalendarPage() {
                 <div
                   key={dateStr}
                   onClick={() => setSelectedDate(dateStr)}
-                  className={`min-h-[94px] bg-[#090e18] border rounded-lg p-2 flex flex-col justify-between cursor-pointer transition-all ${
+                  className={`min-h-[62px] sm:min-h-[94px] bg-[#090e18] border rounded-lg p-1 sm:p-2 flex flex-col justify-between cursor-pointer transition-all ${
                     isSelected
                       ? 'border-[#10b981] bg-[rgba(16,185,129,0.08)] shadow-[0_0_0_1px_#10b981]'
                       : 'border-[#263554] hover:border-[#3b5079] hover:bg-[#0f172a]'
@@ -248,38 +248,43 @@ export default function CalendarPage() {
                 >
                   <div className="flex justify-between items-center">
                     <span
-                      className={`text-[0.85rem] font-bold ${
+                      className={`text-[0.75rem] sm:text-[0.85rem] font-bold ${
                         isToday
-                          ? 'bg-[#3b82f6] text-white rounded-full w-5 h-5 inline-flex items-center justify-center text-[0.75rem]'
+                          ? 'bg-[#3b82f6] text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 inline-flex items-center justify-center text-[0.65rem] sm:text-[0.75rem]'
                           : 'text-[#cbd5e1]'
                       }`}
                     >
                       {day}
                     </span>
                     {isToday && (
-                      <span className="bg-[#3b82f6] text-white text-[0.6rem] px-1 py-0.2 rounded font-bold">
+                      <span className="hidden sm:inline bg-[#3b82f6] text-white text-[0.6rem] px-1 py-0.2 rounded font-bold">
                         TODAY
                       </span>
                     )}
                   </div>
 
-                  <div className="flex flex-col gap-1 mt-1">
+                  <div className="flex flex-col gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
                     {bookedSlots.map((bs) => (
                       <span
                         key={bs.id}
-                        className="text-[0.68rem] font-bold px-1 py-0.5 rounded flex items-center gap-1 bg-[rgba(234,179,8,0.2)] text-[#facc15] border border-[rgba(234,179,8,0.4)] truncate"
+                        className="text-[0.6rem] sm:text-[0.68rem] font-bold px-1 py-0.2 sm:py-0.5 rounded flex items-center gap-0.5 sm:gap-1 bg-[rgba(234,179,8,0.2)] text-[#facc15] border border-[rgba(234,179,8,0.4)] truncate"
                       >
-                        🏆 {bs.companyName || 'Call'}
+                        <span>🏆</span>
+                        <span className="hidden sm:inline truncate">{bs.companyName || 'Call'}</span>
+                        <span className="sm:hidden font-bold">1</span>
                       </span>
                     ))}
                     {availableCount > 0 && (
-                      <span className="text-[0.68rem] font-bold px-1 py-0.5 rounded flex items-center gap-1 bg-[rgba(16,185,129,0.15)] text-[#10b981]">
-                        🟢 {availableCount} Open
+                      <span className="text-[0.6rem] sm:text-[0.68rem] font-bold px-1 py-0.2 sm:py-0.5 rounded flex items-center gap-0.5 sm:gap-1 bg-[rgba(16,185,129,0.15)] text-[#10b981]">
+                        <span>🟢</span>
+                        <span className="hidden sm:inline">{availableCount} Open</span>
+                        <span className="sm:hidden font-bold">{availableCount}</span>
                       </span>
                     )}
                     {blockedCount > 0 && availableCount === 0 && bookedSlots.length === 0 && (
-                      <span className="text-[0.68rem] font-bold px-1 py-0.5 rounded flex items-center gap-1 bg-[rgba(239,68,68,0.15)] text-[#f87171]">
-                        ⛔ Blocked
+                      <span className="text-[0.6rem] sm:text-[0.68rem] font-bold px-1 py-0.2 sm:py-0.5 rounded flex items-center gap-0.5 sm:gap-1 bg-[rgba(239,68,68,0.15)] text-[#f87171]">
+                        <span>⛔</span>
+                        <span className="hidden sm:inline">Blocked</span>
                       </span>
                     )}
                   </div>
@@ -291,16 +296,16 @@ export default function CalendarPage() {
             {nextMonthCells.map((dayNum, i) => (
               <div
                 key={'next_' + i}
-                className="min-h-[94px] bg-[#090e18] border border-[#263554] rounded-lg p-2 flex flex-col justify-between opacity-30 cursor-not-allowed"
+                className="min-h-[62px] sm:min-h-[94px] bg-[#090e18] border border-[#263554] rounded-lg p-1 sm:p-2 flex flex-col justify-between opacity-30 cursor-not-allowed"
               >
-                <span className="text-[0.85rem] font-bold text-[#cbd5e1]">{dayNum}</span>
+                <span className="text-[0.72rem] sm:text-[0.85rem] font-bold text-[#cbd5e1]">{dayNum}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Right: Selected Date Slot Inspector & Manager */}
-        <div className="lg:col-span-4 bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-4 sticky top-20">
+        <div className="lg:col-span-4 bg-[#151d30] border border-[#263554] rounded-xl p-4 sm:p-5 flex flex-col gap-4 relative lg:sticky lg:top-20">
           <div className="border-b border-[#263554] pb-3 flex flex-col gap-1">
             <div className="text-[0.72rem] text-[#94a3b8] uppercase font-bold tracking-wider">
               Selected Date Schedule

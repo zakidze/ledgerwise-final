@@ -267,27 +267,27 @@ export default function DraftEmailPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Target Company Header Banner */}
-      <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3.5 flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">🎯</span>
+      <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <span className="text-xl sm:text-2xl">🎯</span>
           <div>
-            <div className="text-[0.75rem] text-[#94a3b8] font-bold uppercase tracking-wider">
+            <div className="text-[0.7rem] sm:text-[0.75rem] text-[#94a3b8] font-bold uppercase tracking-wider">
               Active Target Company for Email Crafting
             </div>
-            <h2 className="text-[1.15rem] text-white font-extrabold">
+            <h2 className="text-[1.05rem] sm:text-[1.15rem] text-white font-extrabold">
               {company.company_name} ({company.domain || 'e-commerce'})
             </h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           <select
             value={company.company_name}
             onChange={(e) => {
               const found = savedCompanies.find((c) => c.company_name === e.target.value);
               if (found) setActiveCompany(found);
             }}
-            className="bg-[#090e18] border border-[#263554] text-[#10b981] font-semibold text-xs px-2.5 py-1.5 rounded-[6px] outline-none cursor-pointer"
+            className="bg-[#090e18] border border-[#263554] text-[#10b981] font-semibold text-xs px-2.5 py-1.5 rounded-[6px] outline-none cursor-pointer flex-1 sm:flex-initial"
           >
             {savedCompanies.map((c) => (
               <option key={c.company_name} value={c.company_name}>
@@ -295,7 +295,7 @@ export default function DraftEmailPage() {
               </option>
             ))}
           </select>
-          <button className="btn btn-outline btn-small" onClick={() => router.push('/save-company')}>
+          <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={() => router.push('/save-company')}>
             Browse Saved Companies ➔
           </button>
         </div>
@@ -476,9 +476,9 @@ export default function DraftEmailPage() {
               Dispatches this email to {company.company_name} and takes you directly to Step 5: Chat Simulator!
             </p>
 
-            <div className="flex gap-2 justify-between">
+            <div className="flex gap-2 justify-between flex-wrap">
               <button
-                className="btn btn-outline btn-small flex-1"
+                className="btn btn-outline btn-small flex-1 min-w-[90px]"
                 onClick={() => {
                   navigator.clipboard.writeText(body);
                   showToast('Body copied!');
@@ -487,7 +487,7 @@ export default function DraftEmailPage() {
                 Copy Body
               </button>
               <button
-                className="btn btn-outline btn-small flex-1"
+                className="btn btn-outline btn-small flex-1 min-w-[90px]"
                 onClick={() => {
                   navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`);
                   showToast('Full email copied!');
@@ -496,7 +496,7 @@ export default function DraftEmailPage() {
                 Copy Full Email
               </button>
               <button
-                className="btn btn-outline btn-small flex-1"
+                className="btn btn-outline btn-small flex-1 min-w-[90px]"
                 onClick={() => {
                   const match = emailTo.match(/<([^>]+)>/) || [null, emailTo];
                   window.open(

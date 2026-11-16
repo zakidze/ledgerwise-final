@@ -33,7 +33,7 @@ export default function Toast() {
 
   return (
     <div
-      className={`fixed bottom-6 right-6 bg-[#151d30] border border-[#10b981] text-white px-4 py-3 rounded-[10px] text-[0.85rem] font-semibold flex items-center gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[9999] transition-all duration-300 ${
+      className={`fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto max-w-[calc(100vw-32px)] sm:max-w-md bg-[#151d30] border border-[#10b981] text-white px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-[10px] text-[0.8rem] sm:text-[0.85rem] font-semibold flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[9999] transition-all duration-300 ${
         visible ? 'translate-y-0 opacity-100' : 'translate-y-28 opacity-0 pointer-events-none'
       }`}
     >

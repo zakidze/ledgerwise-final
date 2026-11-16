@@ -154,39 +154,39 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
   return (
     <div className="flex flex-col gap-6">
       {/* Top Breadcrumb & Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#151d30] border border-[#263554] p-4 rounded-xl">
-        <div className="flex items-center gap-3">
-          <Link href="/save-company" className="text-[#94a3b8] hover:text-white text-sm no-underline">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 bg-[#151d30] border border-[#263554] p-3.5 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <Link href="/save-company" className="text-[#94a3b8] hover:text-white text-xs sm:text-sm no-underline">
             ← Back to Saved Companies
           </Link>
           <span className="text-[#64748b]">/</span>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-base sm:text-xl font-bold text-white flex items-center gap-1.5 sm:gap-2">
             <span>⭐</span> {company.company_name}
           </h2>
           {company.domain && (
-            <span className="bg-[#0e1726] text-[#38bdf8] text-xs px-2 py-0.5 rounded border border-[#1e3a8a]">
+            <span className="bg-[#0e1726] text-[#38bdf8] text-[0.7rem] sm:text-xs px-2 py-0.5 rounded border border-[#1e3a8a]">
               {company.domain}
             </span>
           )}
-          <span className={`badge ${badgeClass}`}>{scoreVal} Fit</span>
+          <span className={`badge ${badgeClass} text-[0.65rem] sm:text-xs`}>{scoreVal} Fit</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button className="btn btn-accent btn-small" onClick={handleDraftEmail}>
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <button className="btn btn-accent btn-small flex-1 sm:flex-initial" onClick={handleDraftEmail}>
             ✍️ Draft Cold Email ➔
           </button>
-          <button className="btn btn-outline btn-small" onClick={handleOpenChat}>
+          <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={handleOpenChat}>
             💬 Chat Simulator ➔
           </button>
         </div>
       </div>
 
       {/* Grid Layout: Left Column (Company Profile), Right Column (Intelligence Dossier) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
         {/* Column 1: Company Profile & Verification */}
         <div className="flex flex-col gap-5 lg:col-span-1">
           {/* Card: Profile overview */}
-          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-4">
+          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-4 sm:p-5 flex flex-col gap-4">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#263554] pb-2 flex items-center gap-2">
               <span>📋</span> Prospect Profile
             </h3>
@@ -242,7 +242,7 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
           </div>
 
           {/* Card: Account Notes */}
-          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-3">
+          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-4 sm:p-5 flex flex-col gap-3">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <span>📝</span> Account Notes
             </h3>
@@ -252,7 +252,7 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
               placeholder="Add internal notes on this prospect (channels, specific accounting requirements, controller transition, etc.)..."
               className="w-full h-28 bg-[#090e18] border border-[#263554] text-white text-xs p-3 rounded-lg outline-none resize-none focus:border-[#10b981]"
             />
-            <button className="btn btn-outline btn-small self-end" onClick={handleSaveNotes}>
+            <button className="btn btn-outline btn-small self-end w-full sm:w-auto" onClick={handleSaveNotes}>
               Save Notes
             </button>
           </div>
@@ -260,8 +260,8 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
 
         {/* Column 2 & 3: Intelligence Dossier */}
         <div className="flex flex-col gap-5 lg:col-span-2">
-          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-5">
-            <div className="flex flex-wrap justify-between items-center gap-3 border-b border-[#263554] pb-4">
+          <div className="bg-[#151d30] border border-[#263554] rounded-xl p-4 sm:p-5 flex flex-col gap-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#263554] pb-4">
               <div>
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <span>🔍</span> Deep Company Intelligence Dossier
@@ -271,9 +271,9 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap w-full sm:w-auto">
                 <button
-                  className="btn btn-accent btn-small"
+                  className="btn btn-accent btn-small flex-1 sm:flex-initial"
                   onClick={handleSearchIntel}
                   disabled={isSearchingIntel}
                 >
@@ -287,7 +287,7 @@ export default function CompanyDetailsClient({ companyId }: CompanyDetailsClient
                   )}
                 </button>
                 {intel && (
-                  <button className="btn btn-outline btn-small" onClick={copyDossier}>
+                  <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={copyDossier}>
                     Copy Dossier
                   </button>
                 )}

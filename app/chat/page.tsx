@@ -354,18 +354,18 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
   return (
     <div className="flex flex-col gap-4">
       {/* Top Controls */}
-      <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2">
+      <div className="bg-[#151d30] border border-[#263554] rounded-[10px] p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <span className="text-lg">💬</span>
-            <span className="font-bold text-white text-sm">Company Thread:</span>
+            <span className="font-bold text-white text-xs sm:text-sm shrink-0">Company:</span>
             <select
               value={company?.company_name || ''}
               onChange={(e) => {
                 const found = savedCompanies.find((c) => c.company_name === e.target.value);
                 if (found) setActiveCompany(found);
               }}
-              className="bg-[#090e18] border border-[#263554] text-[#10b981] font-semibold text-xs px-2.5 py-1.5 rounded-[6px] outline-none cursor-pointer max-w-[220px]"
+              className="bg-[#090e18] border border-[#263554] text-[#10b981] font-semibold text-xs px-2.5 py-1.5 rounded-[6px] outline-none cursor-pointer flex-1 sm:flex-initial max-w-[220px]"
             >
               {savedCompanies.map((c) => (
                 <option key={c.company_name} value={c.company_name}>
@@ -376,101 +376,102 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
           </div>
 
           {/* View mode switcher */}
-          <div className="flex bg-[#090e18] border border-[#263554] rounded-lg p-0.5">
+          <div className="flex bg-[#090e18] border border-[#263554] rounded-lg p-0.5 overflow-x-auto no-scrollbar w-full sm:w-auto">
             <button
               onClick={() => setViewMode('split')}
-              className={`btn btn-small ${viewMode === 'split' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
+              className={`btn btn-small flex-1 sm:flex-initial text-[0.72rem] sm:text-[0.75rem] ${viewMode === 'split' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
             >
               Split View
             </button>
             <button
               onClick={() => setViewMode('prospect')}
-              className={`btn btn-small ${viewMode === 'prospect' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
+              className={`btn btn-small flex-1 sm:flex-initial text-[0.72rem] sm:text-[0.75rem] ${viewMode === 'prospect' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
             >
               Prospect View
             </button>
             <button
               onClick={() => setViewMode('ledger')}
-              className={`btn btn-small ${viewMode === 'ledger' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
+              className={`btn btn-small flex-1 sm:flex-initial text-[0.72rem] sm:text-[0.75rem] ${viewMode === 'ledger' ? 'bg-[#1c2742] text-white' : 'text-[#94a3b8]'}`}
             >
               Ledgerwise View
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap justify-between sm:justify-end w-full sm:w-auto">
           {/* Autopilot toggle */}
           <div className="flex items-center gap-2 bg-[#090e18] border border-[#263554] px-2.5 py-1 rounded-lg">
-            <label className="text-[0.75rem] text-[#94a3b8] font-bold">AI AUTOPILOT</label>
+            <label className="text-[0.7rem] sm:text-[0.75rem] text-[#94a3b8] font-bold">AUTOPILOT</label>
             <input
               type="checkbox"
               checked={autopilot}
               onChange={(e) => setAutopilot(e.target.checked)}
               className="cursor-pointer"
             />
-            <span className={`badge ${autopilot ? 'badge-high' : 'badge-medium'}`}>
+            <span className={`badge ${autopilot ? 'badge-high' : 'badge-medium'} text-[0.65rem]`}>
               {autopilot ? 'ACTIVE' : 'PAUSED'}
             </span>
           </div>
 
-          <button
-            className="btn btn-outline btn-small"
-            onClick={() => setShowAuditDrawer(!showAuditDrawer)}
-          >
-            Audit Trail ({auditLog.length})
-          </button>
-          <button
-            className="btn btn-outline btn-small"
-            onClick={() => {
-              if (confirm(`Reset message thread for ${company?.company_name || 'this company'}?`)) {
-                resetThread();
-                showToast('Conversation thread reset.');
-              }
-            }}
-          >
-            Reset Thread
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              className="btn btn-outline btn-small text-[0.72rem]"
+              onClick={() => setShowAuditDrawer(!showAuditDrawer)}
+            >
+              Audit ({auditLog.length})
+            </button>
+            <button
+              className="btn btn-outline btn-small text-[0.72rem]"
+              onClick={() => {
+                if (confirm(`Reset message thread for ${company?.company_name || 'this company'}?`)) {
+                  resetThread();
+                  showToast('Conversation thread reset.');
+                }
+              }}
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Live Calendar Appointment Sync Bar */}
-      <div className="bg-[#090e18] border border-[#263554] rounded-lg p-2.5 flex items-center justify-between gap-3 flex-wrap">
+      <div className="bg-[#090e18] border border-[#263554] rounded-lg p-2.5 sm:p-3 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 flex-wrap">
           <div className="flex items-center gap-2">
             <div
               className="pulse-dot"
               style={{ backgroundColor: activeMeeting || openSlotsCount > 0 ? '#10b981' : '#ef4444' }}
             ></div>
-            <span className="font-bold text-white text-xs">Live Calendar Synced</span>
+            <span className="font-bold text-white text-xs">Calendar Synced</span>
           </div>
 
           <div className="flex gap-1.5 items-center flex-wrap">
-            <span className="badge bg-[rgba(16,185,129,0.15)] text-[#34d399] border border-[rgba(16,185,129,0.3)] text-[0.72rem] py-0.5 px-2">
-              🟢 <strong>{openSlotsCount}</strong> Open Slots
+            <span className="badge bg-[rgba(16,185,129,0.15)] text-[#34d399] border border-[rgba(16,185,129,0.3)] text-[0.7rem] sm:text-[0.72rem] py-0.5 px-2">
+              🟢 <strong>{openSlotsCount}</strong> Open
             </span>
-            <span className="badge bg-[rgba(239,68,68,0.15)] text-[#f87171] border border-[rgba(239,68,68,0.3)] text-[0.72rem] py-0.5 px-2">
-              ⛔ <strong>{blockedSlotsCount}</strong> Blocked Slots
+            <span className="badge bg-[rgba(239,68,68,0.15)] text-[#f87171] border border-[rgba(239,68,68,0.3)] text-[0.7rem] sm:text-[0.72rem] py-0.5 px-2">
+              ⛔ <strong>{blockedSlotsCount}</strong> Blocked
             </span>
-            <span className="badge bg-[rgba(234,179,8,0.15)] text-[#facc15] border border-[rgba(234,179,8,0.3)] text-[0.72rem] py-0.5 px-2">
-              🏆 <strong>{bookedSlotsCount}</strong> Booked Calls
+            <span className="badge bg-[rgba(234,179,8,0.15)] text-[#facc15] border border-[rgba(234,179,8,0.3)] text-[0.7rem] sm:text-[0.72rem] py-0.5 px-2">
+              🏆 <strong>{bookedSlotsCount}</strong> Booked
             </span>
           </div>
 
-          <div className="text-[#94a3b8] text-[0.78rem]">
+          <div className="text-[#94a3b8] text-[0.75rem] sm:text-[0.78rem] w-full lg:w-auto">
             {activeMeeting ? (
-              <span>
-                🟢 Confirmed Call: <strong className="text-white">{activeMeeting.timeSlot}</strong> with{' '}
-                {activeMeeting.prospectName} ({activeMeeting.companyName}) | ID: #{activeMeeting.id}
+              <span className="truncate block">
+                🟢 Confirmed: <strong className="text-white">{activeMeeting.timeSlot}</strong> ({activeMeeting.prospectName})
               </span>
             ) : (
-              'No Discovery Call Scheduled Yet'
+              'No Discovery Call Scheduled'
             )}
           </div>
         </div>
 
-        <div className="flex gap-2 items-center flex-wrap">
+        <div className="flex gap-2 items-center flex-wrap justify-between lg:justify-end">
           {/* Quick slot test pills */}
-          <div className="flex gap-1.5 items-center flex-wrap">
+          <div className="flex gap-1.5 items-center overflow-x-auto no-scrollbar py-0.5 max-w-full">
             {nextAvailableSlots.map((s) => (
               <button
                 key={s.formatted}
@@ -478,7 +479,7 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
                   setProspectInput(`Does ${s.formatted} work for our 15-minute discovery call?`);
                   showToast(`Loaded "${s.formatted}" into Prospect Simulator! Hit Send to test.`);
                 }}
-                className="quick-reply-btn border-[rgba(52,211,153,0.4)] text-[#34d399] text-[0.7rem] py-0.5 px-2"
+                className="quick-reply-btn border-[rgba(52,211,153,0.4)] text-[#34d399] text-[0.68rem] sm:text-[0.7rem] py-0.5 px-2 shrink-0"
                 title="Click to test this open slot in chat"
               >
                 📅 {s.formatted}
@@ -486,12 +487,14 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
             ))}
           </div>
 
-          <button className="btn btn-accent btn-small" onClick={() => router.push('/calendar')}>
-            📅 Open / Block Slots in Calendar ➔
-          </button>
-          <button className="btn btn-outline btn-small" onClick={() => setIsCalendarModalOpen(true)}>
-            Quick Schedule
-          </button>
+          <div className="flex gap-1.5 items-center w-full sm:w-auto justify-end">
+            <button className="btn btn-accent btn-small flex-1 sm:flex-initial text-[0.72rem]" onClick={() => router.push('/calendar')}>
+              📅 Calendar ➔
+            </button>
+            <button className="btn btn-outline btn-small flex-1 sm:flex-initial text-[0.72rem]" onClick={() => setIsCalendarModalOpen(true)}>
+              Quick Slot
+            </button>
+          </div>
         </div>
       </div>
 
@@ -520,13 +523,13 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
 
       {/* Dual Split Panes */}
       <div
-        className={`grid gap-4 h-[680px] ${
+        className={`grid gap-4 ${
           viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'
         }`}
       >
         {/* Side 1: Prospect Perspective */}
         {(viewMode === 'split' || viewMode === 'prospect') && (
-          <div className="bg-[#151d30] border border-[#263554] rounded-xl flex flex-col overflow-hidden h-full">
+          <div className="bg-[#151d30] border border-[#263554] rounded-xl flex flex-col overflow-hidden min-h-[500px] h-[540px] md:h-[680px]">
             <div className="p-3 bg-[#1c2742] border-b border-[#263554] border-t-4 border-t-[#3b82f6] flex items-center justify-between">
               <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                 <span>👤</span>
@@ -629,7 +632,7 @@ Return JSON schema: {"rule_applied_note":"string","intent_detected":"string","su
 
         {/* Side 2: Ledgerwise SDR Perspective */}
         {(viewMode === 'split' || viewMode === 'ledger') && (
-          <div className="bg-[#151d30] border border-[#263554] rounded-xl flex flex-col overflow-hidden h-full">
+          <div className="bg-[#151d30] border border-[#263554] rounded-xl flex flex-col overflow-hidden min-h-[500px] h-[540px] md:h-[680px]">
             <div className="p-3 bg-[#1c2742] border-b border-[#263554] border-t-4 border-t-[#10b981] flex items-center justify-between">
               <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
                 <span>⚡</span>

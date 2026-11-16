@@ -226,24 +226,24 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
         </div>
       )}
 
-      <div className="bg-[#151d30] border border-[#263554] rounded-xl p-5 flex flex-col gap-4">
+      <div className="bg-[#151d30] border border-[#263554] rounded-xl p-3.5 sm:p-5 flex flex-col gap-4">
         {/* Panel Header */}
-        <div className="flex flex-wrap justify-between items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-[1.15rem] text-white font-bold">Step 1: B2B Lead Finder & ICP Prospector</h2>
-            <p className="text-[0.8rem] text-[#94a3b8] mt-0.5">
+            <h2 className="text-[1.1rem] sm:text-[1.15rem] text-white font-bold">Step 1: B2B Lead Finder & ICP Prospector</h2>
+            <p className="text-[0.75rem] sm:text-[0.8rem] text-[#94a3b8] mt-0.5">
               Discover real, verified US e-commerce brands ($1M–$10M revenue, 5–50 staff) with active growth triggers.
             </p>
           </div>
-          <div className="flex gap-2">
-            <button className="btn btn-outline btn-small" onClick={() => setIsJsonModalOpen(true)}>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={() => setIsJsonModalOpen(true)}>
               View JSON
             </button>
-            <button className="btn btn-outline btn-small" onClick={exportCsv}>
+            <button className="btn btn-outline btn-small flex-1 sm:flex-initial" onClick={exportCsv}>
               Export CSV
             </button>
             <button
-              className="btn btn-outline btn-small"
+              className="btn btn-outline btn-small flex-1 sm:flex-initial"
               onClick={() => {
                 if (leads.length === 0) return;
                 if (confirm(`Delete all ${leads.length} found leads?`)) {
@@ -258,7 +258,7 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
         </div>
 
         {/* Search Criteria Card */}
-        <div className="bg-[#1c2742] border border-[#263554] rounded-[10px] p-4 flex flex-col gap-3.5">
+        <div className="bg-[#1c2742] border border-[#263554] rounded-[10px] p-3 sm:p-4 flex flex-col gap-3.5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             <div className="criteria-group">
               <label>US State / Location</label>
@@ -338,9 +338,9 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
             </div>
           </div>
 
-          <div className="flex justify-end gap-2.5 mt-1.5">
+          <div className="flex justify-end gap-2.5 mt-1.5 w-full">
             <button
-              className="btn btn-accent px-5 py-2.5 font-bold"
+              className="btn btn-accent px-5 py-2.5 font-bold w-full sm:w-auto"
               onClick={handleSearchLeads}
               disabled={isSearching}
             >
@@ -357,8 +357,8 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
         </div>
 
         {/* Filter & Stats Bar */}
-        <div className="flex flex-wrap justify-between items-center gap-3">
-          <div className="flex gap-3.5 text-[0.85rem]">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex gap-3.5 text-[0.82rem] sm:text-[0.85rem]">
             <span>
               Total Leads: <strong className="text-white">{leads.length}</strong>
             </span>
@@ -367,18 +367,18 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
             </span>
           </div>
 
-          <div className="flex gap-2 flex-wrap items-center">
+          <div className="flex gap-2 flex-wrap items-center w-full sm:w-auto">
             <input
               type="text"
               placeholder="Filter leads..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="bg-[#090e18] border border-[#263554] text-white px-2.5 py-1.5 rounded-[6px] text-[0.8rem] w-[170px] outline-none"
+              className="bg-[#090e18] border border-[#263554] text-white px-2.5 py-1.5 rounded-[6px] text-[0.8rem] w-full sm:w-[170px] outline-none"
             />
             <select
               value={resultFilterState}
               onChange={(e) => setResultFilterState(e.target.value)}
-              className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2 py-1.5 rounded-[6px] text-[0.8rem] outline-none"
+              className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2 py-1.5 rounded-[6px] text-[0.8rem] outline-none flex-1 sm:flex-initial"
             >
               <option value="ALL">All States</option>
               <option value="CA">California</option>
@@ -389,7 +389,7 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
             <select
               value={resultFilterScore}
               onChange={(e) => setResultFilterScore(e.target.value)}
-              className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2 py-1.5 rounded-[6px] text-[0.8rem] outline-none"
+              className="bg-[#090e18] border border-[#263554] text-[#94a3b8] px-2 py-1.5 rounded-[6px] text-[0.8rem] outline-none flex-1 sm:flex-initial"
             >
               <option value="ALL">All Scores</option>
               <option value="High">High</option>
@@ -410,8 +410,11 @@ ${existingNames.length > 0 ? `EXCLUSIONS: ${JSON.stringify(existingNames.slice(-
         </div>
 
         {/* Results Table */}
+        <div className="text-[0.72rem] text-[#64748b] block md:hidden -mb-2">
+          👈 Swipe horizontally to view full table columns 👉
+        </div>
         <div className="overflow-x-auto border border-[#263554] rounded-[10px] bg-[#0b0f19]">
-          <table className="w-full border-collapse text-left text-[0.82rem]">
+          <table className="w-full border-collapse text-left text-[0.82rem] min-w-[920px]">
             <thead>
               <tr className="bg-[#1c2742] text-[#94a3b8] font-semibold uppercase text-[0.7rem] tracking-wider border-b border-[#263554]">
                 <th className="py-2.5 px-3">#</th>
