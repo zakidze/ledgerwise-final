@@ -7,6 +7,7 @@ import {
   getRealAvailableCalendarSlots,
   searchCalendarAppointments,
   parseQueryDate,
+  formatHumanDay,
   getSlotsForDate,
 } from '@/lib/calendar';
 import { getStoredModel } from '@/lib/storage';
@@ -56,6 +57,23 @@ export default function ChatPage() {
 
   const nextAvailableSlots = getRealAvailableCalendarSlots(3);
 
+  // Context date extraction from thread history
+  const getContextDateFromThread = (currentText: string): string | null => {
+    // 1. Direct explicit date in current query?
+    const direct = parseQueryDate(currentText);
+    if (direct) return direct.dateStr;
+
+    // 2. Scan recent thread messages in reverse order for any discussed date
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i];
+      if (!msg || !msg.body) continue;
+      const found = parseQueryDate(msg.body);
+      if (found) return found.dateStr;
+    }
+
+    return null;
+  };
+
   // Incoming prospect reply logic
   const handleIncomingProspectReply = async (replyText: string) => {
     if (!replyText.trim() || !company) return;
@@ -85,31 +103,12 @@ export default function ChatPage() {
   const handleAutonomousSdrResponse = async (prospectText: string) => {
     const draft = await generateSdrDraft(prospectText);
 
-    // Real calendar execution
-    if (draft.should_book_call) {
-      const calRes = searchCalendarAppointments(prospectText, schedule);
-      if (calRes.intent === 'SLOT_CLOSED' || calRes.intent === 'DAY_FULLY_CLOSED' || calRes.intent === 'SLOT_BOOKED') {
-        draft.should_book_call = false;
-        draft.body = calRes.message;
+    // Real calendar execution directly using the target date & slot confirmed in draft
+    if (draft.should_book_call && draft.targetDate && draft.targetSlotTime) {
+      if (draft.intent_detected === 'RESCHEDULE_MEETING' || draft.is_reschedule) {
+        rescheduleSlot(draft.targetDate, draft.targetSlotTime, company);
       } else {
-        let targetDate = draft.targetDate || (calRes.intent === 'BOOK_MEETING' ? calRes.targetDate : null);
-        let targetTime = draft.targetSlotTime || (calRes.intent === 'BOOK_MEETING' ? calRes.targetSlotTime : null);
-
-        if (!targetDate || !targetTime) {
-          const avail = getRealAvailableCalendarSlots(1);
-          if (avail.length > 0) {
-            targetDate = avail[0].dateStr;
-            targetTime = avail[0].slotTime;
-          }
-        }
-
-        if (targetDate && targetTime) {
-          if (draft.intent_detected === 'RESCHEDULE_MEETING' || draft.is_reschedule) {
-            rescheduleSlot(targetDate, targetTime, company);
-          } else {
-            bookSlot(targetDate, targetTime, company);
-          }
-        }
+        bookSlot(draft.targetDate, draft.targetSlotTime, company);
       }
     } else if (draft.intent_detected === 'CANCEL_MEETING') {
       cancelMeeting();
@@ -128,10 +127,12 @@ export default function ChatPage() {
 
   // Generate SDR Draft
   const generateSdrDraft = async (prospectReplyText: string) => {
-    const parsedDate = parseQueryDate(prospectReplyText.toLowerCase());
-    const realSlots = getRealAvailableCalendarSlots(8, parsedDate ? parsedDate.dateStr : '2026-11-17');
+    const contextDate = getContextDateFromThread(prospectReplyText);
+    const parsedDate = parseQueryDate(prospectReplyText.toLowerCase()) || (contextDate ? { dateStr: contextDate, dayLabel: formatHumanDay(contextDate) } : null);
+    const activeDateStr = parsedDate ? parsedDate.dateStr : (contextDate || '2026-11-17');
+    const realSlots = getRealAvailableCalendarSlots(8, activeDateStr);
     const slotStrings = realSlots.map((s) => s.formatted);
-    const calSearchResult = searchCalendarAppointments(prospectReplyText, schedule);
+    const calSearchResult = searchCalendarAppointments(prospectReplyText, schedule, activeDateStr, contextDate || undefined);
     const pName = company?.target_person_name || 'there';
 
     // 1. If prospect requested a blocked or already booked slot
@@ -145,7 +146,7 @@ export default function ChatPage() {
       };
     }
 
-    // 2. If prospect confirmed a verified open slot
+    // 2. If prospect confirmed a verified open slot (or selected slot time on context date)
     if (calSearchResult.intent === 'BOOK_MEETING') {
       return {
         rule_applied_note: calSearchResult.rule_applied_note,
@@ -190,6 +191,7 @@ export default function ChatPage() {
 
 PROSPECT: ${JSON.stringify(company, null, 2)}
 CALENDAR MEETING: ${activeMeeting ? JSON.stringify(activeMeeting) : 'None currently booked'}
+THREAD_CONTEXT_DATE: ${contextDate ? `${formatHumanDay(contextDate)} (${contextDate})` : 'None established'}
 REQUESTED DATE LIVE STATUS: ${requestedDateStatus}
 CALENDAR SEARCH RESULT FOR THIS QUERY: ${JSON.stringify(calSearchResult)}
 ACTUAL VERIFIED AVAILABLE CALENDAR SLOTS: ${slotStrings.join(', ')}
@@ -199,6 +201,7 @@ RULES:
    - If the prospect asked about a date and that date has OPEN slots, offer or confirm those open slots!
    - NEVER claim a date is closed or unavailable when the CALENDAR SEARCH RESULT or REQUESTED DATE LIVE STATUS indicates it has open slots.
    - ONLY inform them a date/slot is closed if the search result explicitly reports SLOT_CLOSED, SLOT_BOOKED, or DAY_FULLY_CLOSED.
+   - If a specific date (${contextDate || 'discussed above'}) was previously discussed in this thread and prospect confirms or specifies a time, you MUST book that exact date (${contextDate}). Do NOT switch to a different date.
 2. If prospect confirms a slot that is available, return intent_detected: "BOOK_MEETING", should_book_call: true, targetDate: "YYYY-MM-DD", targetSlotTime: "time EST".
 3. If prospect requests reschedule, pick next available slot, return intent_detected: "RESCHEDULE_MEETING", should_book_call: true, targetDate: "YYYY-MM-DD", targetSlotTime: "time EST".
 4. Never quote pricing tiers. Deflect to a 15-min discovery call.

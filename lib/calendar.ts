@@ -259,7 +259,7 @@ export function parseQueryDate(lowerText: string): { dateStr: string; dayLabel: 
 
   // 2. Month name + Day Number (e.g., "Nov 26", "November 27th", "Nov 26, 2026", "Dec 4")
   const monthDayMatch = clean.match(
-    /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(202\d))?\b/i
+    /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(202\d))?\b/i
   );
   if (monthDayMatch) {
     const mName = monthDayMatch[1].toLowerCase();
@@ -272,7 +272,7 @@ export function parseQueryDate(lowerText: string): { dateStr: string; dayLabel: 
 
   // 3. Day Number + Month Name (e.g., "26th of Nov", "27 Nov", "30 November 2026")
   const dayMonthMatch = clean.match(
-    /\b(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s*,?\s*(202\d))?\b/i
+    /\b(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?(?:\s*,?\s*(202\d))?\b/i
   );
   if (dayMonthMatch) {
     const dayNum = parseInt(dayMonthMatch[1], 10);
@@ -335,7 +335,7 @@ export function parseQueryDate(lowerText: string): { dateStr: string; dayLabel: 
 }
 
 export function parseQueryTime(lowerText: string): string | null {
-  const clean = lowerText.toLowerCase();
+  const clean = lowerText.toLowerCase().replace(/^[:\s\-]+/, '').trim();
 
   // Specific time formats with AM / PM or colon or conversational "at X"
   if (/\b(?:0?9:00|9am|9\s*am|at\s+9(?!\s*pm)|\b9\s*o'?clock)\b/i.test(clean) && !/\b9\s*pm\b/i.test(clean)) {
@@ -366,12 +366,12 @@ export function parseQueryTime(lowerText: string): string | null {
     return '05:00 PM EST';
   }
 
-  // Generic hour parser e.g. "at 10", "10am", "10:30 am"
-  const generalMatch = clean.match(/\b(0?[1-9]|1[0-2])(?::([0-5]\d))?\s*(am|pm)?\b/i);
-  if (generalMatch) {
-    const hour = parseInt(generalMatch[1], 10);
-    const minute = generalMatch[2] || '00';
-    let ampm = generalMatch[3] ? generalMatch[3].toUpperCase() : '';
+  // Generic hour with colon (e.g. "9:00", "10:30", "11:00 am", "2:00 pm")
+  const colonMatch = clean.match(/\b(0?[1-9]|1[0-2]):([0-5]\d)(?:\s*(am|pm))?\b/i);
+  if (colonMatch) {
+    const hour = parseInt(colonMatch[1], 10);
+    const minute = colonMatch[2];
+    let ampm = colonMatch[3] ? colonMatch[3].toUpperCase() : '';
     if (!ampm) {
       ampm = (hour >= 9 && hour <= 11) ? 'AM' : 'PM';
     }
@@ -379,15 +379,62 @@ export function parseQueryTime(lowerText: string): string | null {
     return `${formattedHour}:${minute} ${ampm} EST`;
   }
 
+  // Generic hour with explicit am/pm (e.g. "10am", "10 am", "2pm", "2 pm")
+  const ampmMatch = clean.match(/\b(0?[1-9]|1[0-2])\s*(am|pm)\b/i);
+  if (ampmMatch) {
+    const hour = parseInt(ampmMatch[1], 10);
+    const ampm = ampmMatch[2].toUpperCase();
+    const formattedHour = String(hour).padStart(2, '0');
+    return `${formattedHour}:00 ${ampm} EST`;
+  }
+
+  // Preceded by "at" or "around" (e.g. "at 10", "at 2", "around 11")
+  const atMatch = clean.match(/\b(?:at|around)\s+(0?[1-9]|1[0-2])(?:\s*(am|pm))?\b/i);
+  if (atMatch) {
+    const hour = parseInt(atMatch[1], 10);
+    let ampm = atMatch[2] ? atMatch[2].toUpperCase() : '';
+    if (!ampm) {
+      ampm = (hour >= 9 && hour <= 11) ? 'AM' : 'PM';
+    }
+    const formattedHour = String(hour).padStart(2, '0');
+    return `${formattedHour}:00 ${ampm} EST`;
+  }
+
   return null;
 }
 
-export function searchCalendarAppointments(queryText: string, sched?: CalendarSchedule, selectedDateStr = '2026-11-17'): CalendarSearchResult {
+export function searchCalendarAppointments(
+  queryText: string,
+  sched?: CalendarSchedule,
+  selectedDateStr = '2026-11-17',
+  contextDateStr?: string
+): CalendarSearchResult {
   const lower = queryText.toLowerCase();
   const currentSched = sched || getOrInitCalendarSchedule();
   const allAvailable = getAllAvailableCalendarSlots(currentSched, selectedDateStr);
-  const parsedDate = parseQueryDate(lower);
-  const parsedTime = parseQueryTime(lower);
+  let parsedDate = parseQueryDate(lower);
+  let parsedTime = parseQueryTime(lower);
+
+  // If date was not explicitly mentioned in this single message, inherit it from thread context
+  if (!parsedDate && contextDateStr) {
+    parsedDate = {
+      dateStr: contextDateStr,
+      dayLabel: formatHumanDay(contextDateStr),
+    };
+  }
+
+  // If prospect replied affirmatively (e.g. "sounds good", "first one", "yes", "lock it in", "that works") without an explicit time,
+  // pick the first available slot on the target date!
+  if (parsedDate && !parsedTime) {
+    const isAffirmative = /\b(?:first|any|sounds good|that works|works for me|let's do it|lock it in|yes|sure|perfect|confirmed|great|book it|book that|ok|okay)\b/i.test(lower);
+    if (isAffirmative) {
+      const daySlots = getSlotsForDate(parsedDate.dateStr, currentSched);
+      const firstOpen = daySlots.find((s) => s.status === 'AVAILABLE');
+      if (firstOpen) {
+        parsedTime = firstOpen.time;
+      }
+    }
+  }
 
   // Scenario 1: Specific Date AND Specific Time requested
   if (parsedDate && parsedTime) {
