@@ -230,51 +230,155 @@ export function getActiveCalendarMeetingProposalText(selectedDateStr = '2026-11-
 }
 
 export function parseQueryDate(lowerText: string): { dateStr: string; dayLabel: string } | null {
-  const dayMap: Record<string, string> = {
-    sunday: '2026-11-15', sun: '2026-11-15',
-    monday: '2026-11-16', mon: '2026-11-16',
-    tuesday: '2026-11-17', tue: '2026-11-17', tues: '2026-11-17',
-    wednesday: '2026-11-18', wed: '2026-11-18',
-    thursday: '2026-11-19', thu: '2026-11-19', thur: '2026-11-19', thurs: '2026-11-19',
-    friday: '2026-11-20', fri: '2026-11-20',
-    saturday: '2026-11-21', sat: '2026-11-21',
-  };
+  const clean = lowerText.toLowerCase();
 
-  for (const dayName in dayMap) {
-    const reg = new RegExp('\\b' + dayName + '\\b', 'i');
-    if (reg.test(lowerText)) {
-      const dateStr = dayMap[dayName];
-      return { dateStr, dayLabel: formatHumanDay(dateStr) };
-    }
-  }
-
-  const m = lowerText.match(/\b(?:nov|november)\s+(\d{1,2})(?:st|nd|rd|th)?\b/i) || lowerText.match(/\b11[\/\-](\d{1,2})\b/);
-  if (m) {
-    const dayNum = parseInt(m[1], 10);
-    const dateStr = `2026-11-${String(dayNum).padStart(2, '0')}`;
+  // 1. Explicit ISO format: YYYY-MM-DD
+  const isoMatch = clean.match(/\b(202\d)-(0?[1-9]|1[0-2])-(0?[1-9]|[12]\d|3[01])\b/);
+  if (isoMatch) {
+    const y = isoMatch[1];
+    const m = isoMatch[2].padStart(2, '0');
+    const d = isoMatch[3].padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
     return { dateStr, dayLabel: formatHumanDay(dateStr) };
   }
 
-  if (lowerText.includes('tomorrow')) {
+  const monthMap: Record<string, number> = {
+    jan: 1, january: 1,
+    feb: 2, february: 2,
+    mar: 3, march: 3,
+    apr: 4, april: 4,
+    may: 5,
+    jun: 6, june: 6,
+    jul: 7, july: 7,
+    aug: 8, august: 8,
+    sep: 9, sept: 9, september: 9,
+    oct: 10, october: 10,
+    nov: 11, november: 11,
+    dec: 12, december: 12,
+  };
+
+  // 2. Month name + Day Number (e.g., "Nov 26", "November 27th", "Nov 26, 2026", "Dec 4")
+  const monthDayMatch = clean.match(
+    /\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(202\d))?\b/i
+  );
+  if (monthDayMatch) {
+    const mName = monthDayMatch[1].toLowerCase();
+    const monthNum = monthMap[mName] || 11;
+    const dayNum = parseInt(monthDayMatch[2], 10);
+    const yearNum = monthDayMatch[3] ? parseInt(monthDayMatch[3], 10) : 2026;
+    const dateStr = `${yearNum}-${String(monthNum).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    return { dateStr, dayLabel: formatHumanDay(dateStr) };
+  }
+
+  // 3. Day Number + Month Name (e.g., "26th of Nov", "27 Nov", "30 November 2026")
+  const dayMonthMatch = clean.match(
+    /\b(\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s*,?\s*(202\d))?\b/i
+  );
+  if (dayMonthMatch) {
+    const dayNum = parseInt(dayMonthMatch[1], 10);
+    const mName = dayMonthMatch[2].toLowerCase();
+    const monthNum = monthMap[mName] || 11;
+    const yearNum = dayMonthMatch[3] ? parseInt(dayMonthMatch[3], 10) : 2026;
+    const dateStr = `${yearNum}-${String(monthNum).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    return { dateStr, dayLabel: formatHumanDay(dateStr) };
+  }
+
+  // 4. Numeric formats: MM/DD or MM/DD/YYYY or MM-DD (e.g. "11/26", "11/27/2026", "11-30")
+  const numDateMatch = clean.match(/\b(0?[1-9]|1[0-2])[\/\-](0?[1-9]|[12]\d|3[01])(?:[\/\-](202\d))?\b/);
+  if (numDateMatch) {
+    const monthNum = parseInt(numDateMatch[1], 10);
+    const dayNum = parseInt(numDateMatch[2], 10);
+    const yearNum = numDateMatch[3] ? parseInt(numDateMatch[3], 10) : 2026;
+    const dateStr = `${yearNum}-${String(monthNum).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    return { dateStr, dayLabel: formatHumanDay(dateStr) };
+  }
+
+  // 5. Relative keywords: today, tomorrow
+  if (clean.includes('tomorrow')) {
     return { dateStr: '2026-11-15', dayLabel: 'Sunday, Nov 15' };
   }
-  if (lowerText.includes('today')) {
+  if (clean.includes('today')) {
     return { dateStr: '2026-11-14', dayLabel: 'Saturday, Nov 14' };
+  }
+
+  // 6. Day of the week without explicit date number (e.g., "Monday", "next Friday", "this Thursday")
+  const weekdayMap: Array<{ pattern: RegExp; dayIndex: number }> = [
+    { pattern: /\b(?:sun|sunday)\b/i, dayIndex: 0 },
+    { pattern: /\b(?:mon|monday)\b/i, dayIndex: 1 },
+    { pattern: /\b(?:tue|tues|tuesday)\b/i, dayIndex: 2 },
+    { pattern: /\b(?:wed|wednesday)\b/i, dayIndex: 3 },
+    { pattern: /\b(?:thu|thur|thurs|thursday)\b/i, dayIndex: 4 },
+    { pattern: /\b(?:fri|friday)\b/i, dayIndex: 5 },
+    { pattern: /\b(?:sat|saturday)\b/i, dayIndex: 6 },
+  ];
+
+  // Base date for simulated environment is Saturday, Nov 14, 2026
+  const baseYear = 2026;
+  const baseMonth = 10; // November (0-indexed)
+  const baseDay = 14;   // Saturday (day index 6)
+  const baseDayIndex = 6;
+
+  for (const item of weekdayMap) {
+    if (item.pattern.test(clean)) {
+      let diff = (item.dayIndex - baseDayIndex + 7) % 7;
+      if (diff === 0) diff = 7; // Next occurrence
+      if (clean.includes('next')) {
+        diff += 7;
+      }
+      const targetDate = new Date(baseYear, baseMonth, baseDay + diff);
+      const dateStr = formatDateKey(targetDate);
+      return { dateStr, dayLabel: formatHumanDay(dateStr) };
+    }
   }
 
   return null;
 }
 
 export function parseQueryTime(lowerText: string): string | null {
-  if (/\b(?:9:00|9am|9\s*am)\b/i.test(lowerText)) return '09:00 AM EST';
-  if (/\b(?:11:00|11am|11\s*am)\b/i.test(lowerText)) return '11:00 AM EST';
-  if (/\b(?:2:00|2pm|2\s*pm|14:00)\b/i.test(lowerText)) return '02:00 PM EST';
-  if (/\b(?:4:00|4pm|4\s*pm|16:00)\b/i.test(lowerText)) return '04:00 PM EST';
-  if (/\b(?:1:00|1pm|1\s*pm)\b/i.test(lowerText)) return '01:00 PM EST';
-  if (/\b(?:1:30|1:30pm)\b/i.test(lowerText)) return '01:30 PM EST';
-  if (/\b(?:3:00|3pm|3\s*pm)\b/i.test(lowerText)) return '03:00 PM EST';
-  if (/\b(?:3:30|3:30pm)\b/i.test(lowerText)) return '03:30 PM EST';
-  if (/\b(?:5:00|5pm|5\s*pm)\b/i.test(lowerText)) return '05:00 PM EST';
+  const clean = lowerText.toLowerCase();
+
+  // Specific time formats with AM / PM or colon or conversational "at X"
+  if (/\b(?:0?9:00|9am|9\s*am|at\s+9(?!\s*pm)|\b9\s*o'?clock)\b/i.test(clean) && !/\b9\s*pm\b/i.test(clean)) {
+    return '09:00 AM EST';
+  }
+  if (/\b(?:11:00|11am|11\s*am|at\s+11(?!\s*pm)|\b11\s*o'?clock)\b/i.test(clean) && !/\b11\s*pm\b/i.test(clean)) {
+    return '11:00 AM EST';
+  }
+  if (/\b(?:0?1:00|1pm|1\s*pm|13:00|at\s+1(?!\s*am)|\b1\s*o'?clock)\b/i.test(clean) && !/\b1\s*am\b/i.test(clean)) {
+    return '01:00 PM EST';
+  }
+  if (/\b(?:0?1:30|1:30pm|1:30\s*pm)\b/i.test(clean)) {
+    return '01:30 PM EST';
+  }
+  if (/\b(?:0?2:00|2pm|2\s*pm|14:00|at\s+2(?!\s*am)|\b2\s*o'?clock)\b/i.test(clean) && !/\b2\s*am\b/i.test(clean)) {
+    return '02:00 PM EST';
+  }
+  if (/\b(?:0?3:00|3pm|3\s*pm|15:00|at\s+3(?!\s*am)|\b3\s*o'?clock)\b/i.test(clean) && !/\b3\s*am\b/i.test(clean)) {
+    return '03:00 PM EST';
+  }
+  if (/\b(?:0?3:30|3:30pm|3:30\s*pm)\b/i.test(clean)) {
+    return '03:30 PM EST';
+  }
+  if (/\b(?:0?4:00|4pm|4\s*pm|16:00|at\s+4(?!\s*am)|\b4\s*o'?clock)\b/i.test(clean) && !/\b4\s*am\b/i.test(clean)) {
+    return '04:00 PM EST';
+  }
+  if (/\b(?:0?5:00|5pm|5\s*pm|17:00|at\s+5(?!\s*am)|\b5\s*o'?clock)\b/i.test(clean) && !/\b5\s*am\b/i.test(clean)) {
+    return '05:00 PM EST';
+  }
+
+  // Generic hour parser e.g. "at 10", "10am", "10:30 am"
+  const generalMatch = clean.match(/\b(0?[1-9]|1[0-2])(?::([0-5]\d))?\s*(am|pm)?\b/i);
+  if (generalMatch) {
+    const hour = parseInt(generalMatch[1], 10);
+    const minute = generalMatch[2] || '00';
+    let ampm = generalMatch[3] ? generalMatch[3].toUpperCase() : '';
+    if (!ampm) {
+      ampm = (hour >= 9 && hour <= 11) ? 'AM' : 'PM';
+    }
+    const formattedHour = String(hour).padStart(2, '0');
+    return `${formattedHour}:${minute} ${ampm} EST`;
+  }
+
   return null;
 }
 
@@ -287,7 +391,7 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
 
   // Scenario 1: Specific Date AND Specific Time requested
   if (parsedDate && parsedTime) {
-    const daySlots = currentSched[parsedDate.dateStr] || [];
+    const daySlots = getSlotsForDate(parsedDate.dateStr, currentSched);
     const timeCore = parsedTime.slice(0, 5);
     const slot = daySlots.find((s) => s.time.includes(timeCore) || s.time.toLowerCase().replace(/\s/g, '').includes(parsedTime.toLowerCase().replace(/\s/g, '')));
 
@@ -297,6 +401,7 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
         return {
           intent: 'SLOT_CLOSED',
           should_book_call: false,
+          targetDate: parsedDate.dateStr,
           targetDayLabel: parsedDate.dayLabel,
           targetTime: parsedTime,
           alternativeSlots: altText,
@@ -310,6 +415,7 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
         return {
           intent: 'SLOT_BOOKED',
           should_book_call: false,
+          targetDate: parsedDate.dateStr,
           targetDayLabel: parsedDate.dayLabel,
           targetTime: parsedTime,
           alternativeSlots: altText,
@@ -325,6 +431,8 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
           targetDate: parsedDate.dateStr,
           targetSlotTime: slot.time,
           formattedSlot: `${parsedDate.dayLabel} at ${slot.time}`,
+          targetDayLabel: parsedDate.dayLabel,
+          targetTime: slot.time,
           rule_applied_note: `Calendar Sync: Confirmed and booked OPEN slot on ${parsedDate.dayLabel} at ${slot.time}.`,
           message: `Yes! ${parsedDate.dayLabel} at ${slot.time} is open on our calendar. I have locked this in for our 15-minute discovery call and sent over a calendar invite with Google Meet link. Looking forward to speaking then!`,
         };
@@ -338,6 +446,9 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
       return {
         intent: 'SLOT_NOT_FOUND',
         should_book_call: false,
+        targetDate: parsedDate.dateStr,
+        targetDayLabel: parsedDate.dayLabel,
+        targetTime: parsedTime,
         rule_applied_note: `Calendar Sync: Slot ${parsedTime} not found on ${parsedDate.dayLabel}. Offered alternatives.`,
         message: `${altMsg} ${altText ? 'Would one of those work for you?' : ''}`,
       };
@@ -346,7 +457,7 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
 
   // Scenario 2: Specific Date requested
   if (parsedDate && !parsedTime) {
-    const daySlots = currentSched[parsedDate.dateStr] || [];
+    const daySlots = getSlotsForDate(parsedDate.dateStr, currentSched);
     const openDaySlots = daySlots.filter((s) => s.status === 'AVAILABLE');
 
     if (openDaySlots.length > 0) {
@@ -354,6 +465,8 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
       return {
         intent: 'DAY_SLOTS_OPEN',
         should_book_call: false,
+        targetDate: parsedDate.dateStr,
+        targetDayLabel: parsedDate.dayLabel,
         rule_applied_note: `Calendar Sync: Returned ${openDaySlots.length} open slots for ${parsedDate.dayLabel}.`,
         message: `I checked our calendar for ${parsedDate.dayLabel}. We currently have open appointment slots at: ${timesList}. Which of those works best for your schedule?`,
       };
@@ -362,6 +475,8 @@ export function searchCalendarAppointments(queryText: string, sched?: CalendarSc
       return {
         intent: 'DAY_FULLY_CLOSED',
         should_book_call: false,
+        targetDate: parsedDate.dateStr,
+        targetDayLabel: parsedDate.dayLabel,
         rule_applied_note: `Calendar Sync: Detected FULLY CLOSED/BLOCKED day for ${parsedDate.dayLabel}. Offered live alternatives.`,
         message: `I checked our calendar for ${parsedDate.dayLabel}, but our team is fully booked/closed for that entire day. ${altText ? `However, we have open appointments on ${altText}. Would either of those work?` : `All nearest dates are currently closed or blocked.`}`,
       };

@@ -3,7 +3,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSavedCompanies, useChatThread, useCalendar, useAuditLog } from '@/lib/hooks';
-import { getRealAvailableCalendarSlots, searchCalendarAppointments } from '@/lib/calendar';
+import {
+  getRealAvailableCalendarSlots,
+  searchCalendarAppointments,
+  parseQueryDate,
+  getSlotsForDate,
+} from '@/lib/calendar';
 import { getStoredModel } from '@/lib/storage';
 import { callAiCompletion, extractJsonString } from '@/lib/ai';
 import { showToast } from '@/lib/toast';
@@ -123,12 +128,13 @@ export default function ChatPage() {
 
   // Generate SDR Draft
   const generateSdrDraft = async (prospectReplyText: string) => {
-    const realSlots = getRealAvailableCalendarSlots(4);
+    const parsedDate = parseQueryDate(prospectReplyText.toLowerCase());
+    const realSlots = getRealAvailableCalendarSlots(8, parsedDate ? parsedDate.dateStr : '2026-11-17');
     const slotStrings = realSlots.map((s) => s.formatted);
     const calSearchResult = searchCalendarAppointments(prospectReplyText, schedule);
     const pName = company?.target_person_name || 'there';
 
-    // If prospect requested a blocked or already booked slot
+    // 1. If prospect requested a blocked or already booked slot
     if (calSearchResult.intent === 'SLOT_CLOSED' || calSearchResult.intent === 'DAY_FULLY_CLOSED' || calSearchResult.intent === 'SLOT_BOOKED') {
       return {
         rule_applied_note: calSearchResult.rule_applied_note,
@@ -139,7 +145,7 @@ export default function ChatPage() {
       };
     }
 
-    // If prospect confirmed a verified open slot
+    // 2. If prospect confirmed a verified open slot
     if (calSearchResult.intent === 'BOOK_MEETING') {
       return {
         rule_applied_note: calSearchResult.rule_applied_note,
@@ -150,6 +156,27 @@ export default function ChatPage() {
         body: `Hey ${pName},\n\n${calSearchResult.message}\n\nBest,\nAlex | Ledgerwise`,
         should_book_call: true,
       };
+    }
+
+    // 3. If prospect asked about availability on a specific date (e.g. "how about Thursday, Nov 26, 2026")
+    if (calSearchResult.intent === 'DAY_SLOTS_OPEN') {
+      return {
+        rule_applied_note: calSearchResult.rule_applied_note,
+        intent_detected: 'DAY_SLOTS_OPEN',
+        targetDate: calSearchResult.targetDate,
+        subject: `Re: ${messages[0]?.subject || 'Availability on ' + (calSearchResult.targetDayLabel || 'our calendar')}`,
+        body: `Hey ${pName},\n\n${calSearchResult.message}\n\nBest,\nAlex | Ledgerwise`,
+        should_book_call: false,
+      };
+    }
+
+    // Prepare requested date context for AI model
+    let requestedDateStatus = 'None specifically requested in query.';
+    if (parsedDate) {
+      const daySlots = getSlotsForDate(parsedDate.dateStr, schedule);
+      const openTimes = daySlots.filter((s) => s.status === 'AVAILABLE').map((s) => s.time);
+      const closedTimes = daySlots.filter((s) => s.status !== 'AVAILABLE').map((s) => `${s.time} (${s.status})`);
+      requestedDateStatus = `${parsedDate.dayLabel} (${parsedDate.dateStr}) -> OPEN SLOTS: [${openTimes.join(', ') || 'None'}], BLOCKED/BOOKED: [${closedTimes.join(', ') || 'None'}]`;
     }
 
     // Try AI completion
@@ -163,11 +190,15 @@ export default function ChatPage() {
 
 PROSPECT: ${JSON.stringify(company, null, 2)}
 CALENDAR MEETING: ${activeMeeting ? JSON.stringify(activeMeeting) : 'None currently booked'}
-ACTUAL VERIFIED AVAILABLE CALENDAR SLOTS: ${slotStrings.join(', ')}
+REQUESTED DATE LIVE STATUS: ${requestedDateStatus}
 CALENDAR SEARCH RESULT FOR THIS QUERY: ${JSON.stringify(calSearchResult)}
+ACTUAL VERIFIED AVAILABLE CALENDAR SLOTS: ${slotStrings.join(', ')}
 
 RULES:
-1. ONLY offer or confirm dates from the verified available slots above. If prospect asks for a time that is BLOCKED or BOOKED according to the calendar search result, politely inform them it is closed and offer the open alternatives. NEVER offer or book a blocked date.
+1. TRUTH IN SCHEDULING: Always adhere to the CALENDAR SEARCH RESULT and REQUESTED DATE LIVE STATUS above.
+   - If the prospect asked about a date and that date has OPEN slots, offer or confirm those open slots!
+   - NEVER claim a date is closed or unavailable when the CALENDAR SEARCH RESULT or REQUESTED DATE LIVE STATUS indicates it has open slots.
+   - ONLY inform them a date/slot is closed if the search result explicitly reports SLOT_CLOSED, SLOT_BOOKED, or DAY_FULLY_CLOSED.
 2. If prospect confirms a slot that is available, return intent_detected: "BOOK_MEETING", should_book_call: true, targetDate: "YYYY-MM-DD", targetSlotTime: "time EST".
 3. If prospect requests reschedule, pick next available slot, return intent_detected: "RESCHEDULE_MEETING", should_book_call: true, targetDate: "YYYY-MM-DD", targetSlotTime: "time EST".
 4. Never quote pricing tiers. Deflect to a 15-min discovery call.
