@@ -100,7 +100,14 @@ export function getStoredLeads(): Lead[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.map((item) => normalizeLead(item)).filter((x): x is Lead => x !== null);
+    const result: Lead[] = [];
+    for (const item of parsed) {
+      const normalized = normalizeLead(item);
+      if (normalized) {
+        result.push(normalized);
+      }
+    }
+    return result;
   } catch {
     return [];
   }
@@ -126,18 +133,21 @@ export function getStoredSavedCompanies(): SavedCompany[] {
       localStorage.setItem(STORAGE_KEYS.SAVED_COMPANIES, JSON.stringify([SAMPLE_BALA_COMPANY]));
       return [SAMPLE_BALA_COMPANY];
     }
-    return parsed.map((c) => {
+    const result: SavedCompany[] = [];
+    for (const c of parsed) {
       const normalized = normalizeLead(c);
-      if (!normalized) return null;
-      return {
-        ...normalized,
-        id: c.id || 'comp_' + Math.random().toString(36).substring(2, 9),
-        status: c.status || 'SAVED',
-        saved_at: c.saved_at || new Date().toISOString(),
-        channels: c.channels || ['DTC', 'Retail'],
-        notes: c.notes || '',
-      };
-    }).filter((x): x is SavedCompany => x !== null);
+      if (normalized) {
+        result.push({
+          ...normalized,
+          id: (c.id as string) || 'comp_' + Math.random().toString(36).substring(2, 9),
+          status: (c.status as SavedCompany['status']) || 'SAVED',
+          saved_at: (c.saved_at as string) || new Date().toISOString(),
+          channels: Array.isArray(c.channels) ? c.channels : ['DTC', 'Retail'],
+          notes: (c.notes as string) || '',
+        });
+      }
+    }
+    return result.length > 0 ? result : [SAMPLE_BALA_COMPANY];
   } catch {
     return [SAMPLE_BALA_COMPANY];
   }

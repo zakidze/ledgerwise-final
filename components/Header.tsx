@@ -7,7 +7,8 @@ import { useSavedCompanies, useLeads, useCalendar } from '@/lib/hooks';
 import { getStoredModel, saveStoredModel } from '@/lib/storage';
 
 export default function Header() {
-  const pathname = usePathname();
+  const rawPath = usePathname();
+  const pathname = rawPath || '';
   const { savedCompanies, activeCompany, setActiveCompany } = useSavedCompanies();
   const { leads } = useLeads();
   const { schedule } = useCalendar();

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function FlowBanner() {
-  const pathname = usePathname();
+  const rawPath = usePathname();
+  const pathname = rawPath || '';
   const router = useRouter();
 
   const isLeads = pathname.startsWith('/find-lead');
